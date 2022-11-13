@@ -1,11 +1,11 @@
 # file-decryptor
-Simple python command line wrapper around [cryptography package](https://cryptography.io/en/latest/).
+Simple python command line wrapper around [buffered-encryption package](https://pypi.org/project/buffered-encryption/).
 Use this code to decrypt data prepared for AI Games 2022 hackathon.
 
 ## Requirements
-Use the below command to install the cryptography package.
+Use the below command to install the buffered-encryption package.
     
-    pip install cryptography
+    pip install buffered-encryption
 
 **Note:** You should use at least Python 3.6
 
