@@ -1,15 +1,15 @@
 import argparse
-from cryptography.fernet import Fernet
+from buffered_encryption.aesgcm import DecryptionIterator
 
 
 parser = argparse.ArgumentParser(
     prog = 'decrypt_file',
-    description = 'Decrypt binary file using Fernet key.'
+    description = 'Decrypt binary file using provided key.'
 )
 
 parser.add_argument(
     'key_file',
-    help='Fernet key file.'
+    help='Key file.'
 )
 
 parser.add_argument(
@@ -25,16 +25,15 @@ args = parser.parse_args()
 
 # read key file
 with open(args.key_file, 'rb') as f:
-    key_bytes = f.read()
-    key = Fernet(key_bytes)
+    key = f.read(32)
+    signature = f.read(12)
+    iv = f.read(12)
+    tag = f.read()
 
-# read source file
-with open(args.source_filename, 'rb') as f:
-    encrypted_file_bytes = f.read()
-
-# encrypte source file data
-file_bytes = key.decrypt(encrypted_file_bytes) 
-
-# write encrypted data to destination file
-with open(args.destination_filename, 'wb') as f:
-    f.write(file_bytes)
+# read encrypted source file
+with open(args.source_filename, 'rb') as source_f:
+    dec = DecryptionIterator(source_f, key, signature, iv, tag)
+    # write encrypted chunks to destination file
+    with open(args.destination_filename, 'wb') as destination_f:
+        for chunk in dec:
+            destination_f.write(chunk)
